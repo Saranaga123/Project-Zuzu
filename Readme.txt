@@ -78,3 +78,5 @@ To ensure stability during simultaneous 4-servo movement and prevent MCU resets:
 * `/assets`: MP3 sound library (0001.mp3 to 0005.mp3).
 * `/docs`: RB0036 Assembly Guide & Wiring Schematics.
 * `/lib`: Required libraries (U8g2, Servo, DFRobotDFPlayerMini).
+
+https://wokwi.com/projects/456630727127580673
