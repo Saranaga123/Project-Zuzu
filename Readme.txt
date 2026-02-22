@@ -1,54 +1,79 @@
-# Zuzu - Personal Desktop Companion
+# Zuzu - Personal Desktop Companion 🤖
 
-## 🌟 Project Scope + Core Features
-Zuzu is a customized, interactive desktop companion robot engineered as a high-tech gift. It is designed to inhabit a workspace, providing emotional interaction through a "personality-driven" state machine.
-
-* **👁️ Active Tracking:** Uses a Pan-Tilt ultrasonic array to "look" at and follow people as they move across the desk.
-* **😊 Emotive Vision:** A 0.96" OLED "Face" capable of rendering real-time eye animations based on internal "mood" variables.
-* **🖐️ Haptic Intelligence:** Multi-zone capacitive touch sensors allow Zuzu to differentiate between a gentle head pat (Happy) and a poke (Angry).
-* **🎵 Sonic Identity:** Integrated MP3 module for high-fidelity audio feedback (chirps, sighs, and custom voice clips).
-* **❓ Attention Seeking:** If an object is detected but remains out of reach, Zuzu will initiate "Seeker" protocols to get noticed.
+**Zuzu** is an interactive, emotive desktop robot engineered as a custom gift. It uses a "personality-driven" state machine to bridge the gap between simple electronics and social robotics.
 
 ---
 
-## 🧠 The "Brain" and Components
-Zuzu’s architecture is built on a Modular Hardware Stack, ensuring each sensory input is handled with minimal latency.
+## 🌟 Project Scope + Core Features
+Zuzu is designed to inhabit a workspace, providing emotional interaction through high-fidelity feedback loops.
+
+* **👁️ Active Tracking:** Pan-Tilt ultrasonic array to follow people moving across the desk.
+* **😊 Emotive Vision:** 0.96" OLED "Face" rendering real-time eye animations (Happy, Sad, Angry, Sleepy).
+* **🖐️ Haptic Intelligence:** Multi-zone capacitive touch sensors (Head Pat = Happy | Side Poke = Angry).
+* **🎵 Sonic Identity:** DFPlayer Mini for high-quality chirps, sighs, and custom voice clips.
+* **❓ Attention Seeking:** Initiates "Seeker" protocols if an object is detected but remains out of reach.
+
+---
+
+## 🧠 Technical Architecture (The "Brain")
+Built on a modular hardware stack optimized for the ATmega328P.
 
 | Logic Layer | Component | Technical Role |
 | :--- | :--- | :--- |
-| **Microcontroller** | **Arduino Nano V3.0** | Main processing unit; manages state logic and I/O. |
-| **Visual Interface** | **SSD1306 OLED** | 128x64 I2C display for rendering eye animations. |
-| **Spatial Sensing** | **HC-SR04** | Ultrasonic "Radar" for distance and object tracking. |
-| **Tactile Input** | **TTP223 Sensor** | Capacitive touch triggers for haptic interaction. |
+| **Microcontroller** | **Arduino Nano V3.0** | Main processing unit; manages state logic. |
+| **Visuals** | **SSD1306 OLED** | 128x64 I2C display (Powered by **U8g2 Library**). |
+| **Spatial Sensing** | **HC-SR04** | Ultrasonic "Radar" for distance and tracking. |
+| **Audio** | **DFPlayer Mini** | MP3-TF-16P Module with 1kΩ resistor on RX line. |
 
 ---
 
-## 🛒 Shopping List (High-Quality Prototype)
-| Component Category | Item Description | Specification |
+## 🔌 Pin Mapping & Wiring
+| Component | Arduino Pin | Function |
 | :--- | :--- | :--- |
-| **Core Logic** | Arduino Nano V3.0 | ATmega328P with USB Mini |
-| **Face/Display** | 0.96" I2C OLED | SSD1306 (Blue/White) |
-| **Motion/Arms** | 4x SG90 Servos | 9g Micro Servos |
-| **Sensors** | HC-SR04 + 2x TTP223 | Proximity + Capacitive Touch |
-| **Audio** | DFPlayer Mini + Speaker | MP3 Module + 8Ω 0.5W Speaker |
-| **Structure** | Pan-Tilt Bracket | FPV Nylon mini bracket |
-| **Electrical** | 1k Ohm Resistor | For DFPlayer RX noise reduction |
+| **OLED SDA** | A4 | I2C Data |
+| **OLED SCL** | A5 | I2C Clock |
+| **Servo 1 (Pan)** | D3 | PWM Head Rotation |
+| **Servo 2 (Tilt)** | D5 | PWM Head Pitch |
+| **Servo 3 (L-Arm)** | D6 | PWM Left Arm |
+| **Servo 4 (R-Arm)** | D9 | PWM Right Arm |
+| **Ultrasonic Trig**| D7 | Trigger Pulse |
+| **Ultrasonic Echo**| D8 | Echo Return |
+| **Touch (Head)** | D2 | Interrupt Trigger (Happy) |
+| **Touch (Side)** | D4 | Grumpy Trigger |
 
 ---
 
-## 💰 Hardware Specifications (Sri Lanka Market - 2026)
-*Estimated prices based on local vendors (Tronic.lk, Alphatronic, Nilambara).*
+## ⚡ Power Architecture (Single Cable Mode)
+To prevent "Brown-outs" and ensure stability, Zuzu uses a **Common Ground** split-power design:
+1. **Source:** Single 5V 2A USB wall adapter.
+2. **Logic Rail:** Powers Arduino Nano, OLED, and Sensors.
+3. **Power Rail:** Powers 4x SG90 Servos directly (bypass Arduino regulator).
+4. **Common Ground:** All GND pins connected to a single point.
 
-| ✅ | Component Item | Qty | Price (LKR) | Total (LKR) |
+---
+
+## 💰 Bill of Materials (Sri Lanka Market - Feb 2026)
+*Estimated local prices from vendors like Tronic.lk, Senith, and Nilambara.*
+
+| ✅ | Component Item | Qty | Unit Price (LKR) | Total (LKR) |
 | :--- | :--- | :---: | :---: | :---: |
-| 🔲 | **Arduino Nano (Compatible)** | 1 | 1,050 | 1,050 |
-| 🔲 | **0.96" OLED I2C Display** | 1 | 590 | 590 |
-| 🔲 | **SG90 Micro Servo** | 4 | 350 | 1,400 |
-| 🔲 | **Pan-Tilt Mechanical Bracket** | 1 | 350 | 350 |
-| 🔲 | **HC-SR04 Ultrasonic Sensor** | 1 | 300 | 300 |
-| 🔲 | **TTP223 Touch Module** | 2 | 100 | 200 |
-| 🔲 | **DFPlayer Mini Sound Board** | 1 | 510 | 510 |
-| 🔲 | **8-Ohm Internal Speaker** | 1 | 150 | 150 |
-| 🔲 | **Jumper Wires + Breadboard** | 1 | 700 | 700 |
+| 🔲 | Arduino Nano (CH340 Clone) | 1 | 1,050 | 1,050 |
+| 🔲 | 0.96" OLED I2C Display | 1 | 590 | 590 |
+| 🔲 | SG90 Micro Servo | 4 | 350 | 1,400 |
+| 🔲 | Pan-Tilt Mechanical Bracket | 1 | 350 | 350 |
+| 🔲 | HC-SR04 Ultrasonic Sensor | 1 | 300 | 300 |
+| 🔲 | TTP223 Touch Module | 2 | 100 | 200 |
+| 🔲 | DFPlayer Mini Sound Board | 1 | 450 | 450 |
+| 🔲 | MB102 Power Module (for testing) | 1 | 250 | 250 |
+| 🔲 | Jumper Wires + 830pt Breadboard | 1 | 900 | 900 |
+| 🔲 | Small Speaker + 1kΩ Resistor | 1 | 160 | 160 |
 | | | | | |
-| 🚀 | **ESTIMATED PROJECT TOTAL** | | | **Rs. 5,250** |
+| 🚀 | **ESTIMATED TOTAL** | | | **Rs. 5,650** |
+
+---
+
+## 📂 Repository Structure
+* `/src`: Main Arduino `.ino` files and logic.
+* `/assets`: MP3 sound files and eye bitmaps.
+* `/docs`: Wiring diagrams and assembly photos.
+* `/lib`: External library references (U8g2, Servo, DFRobot).
