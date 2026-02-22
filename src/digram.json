@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "author": "Zuzu Robot",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-nano", "id": "nano", "top": 0, "left": 0, "attrs": {} },
+
+    { "type": "board-ssd1306", "id": "oled", "top": 150, "left": 60, "attrs": {} },
+
+    { "type": "wokwi-servo", "id": "pan", "top": -120, "left": -230, "attrs": { "pin": "3" } },
+    { "type": "wokwi-servo", "id": "tilt", "top": -120, "left": 260, "attrs": { "pin": "5" } },
+
+    { "type": "wokwi-servo", "id": "leftArm", "top": 200, "left": -200, "attrs": { "pin": "6" } },
+    { "type": "wokwi-servo", "id": "rightArm", "top": 200, "left": 260, "attrs": { "pin": "9" } },
+
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "ultrasonic",
+      "top": -150,
+      "left": 0,
+      "attrs": { "distance": "100" }
+    },
+
+    {
+      "type": "wokwi-pushbutton",
+      "id": "touchHead",
+      "top": 70,
+      "left": -100,
+      "attrs": { "color": "green" }
+    },
+
+    {
+      "type": "wokwi-pushbutton",
+      "id": "touchSide",
+      "top": 70,
+      "left": 250,
+      "attrs": { "color": "red" }
+    }
+  ],
+
+  "connections": [
+    [ "nano:A5", "oled:SCL", "black", [] ],
+    [ "nano:A4", "oled:SDA", "blue", [] ],
+    [ "nano:5V", "oled:VCC", "red", [] ],
+    [ "nano:GND", "oled:GND", "black", [] ],
+
+    [ "nano:3", "pan:PWM", "orange", [] ],
+    [ "nano:5", "tilt:PWM", "orange", [] ],
+    [ "nano:6", "leftArm:PWM", "orange", [] ],
+    [ "nano:9", "rightArm:PWM", "orange", [] ],
+
+    [ "nano:7", "ultrasonic:TRIG", "green", [] ],
+    [ "nano:8", "ultrasonic:ECHO", "blue", [] ],
+
+    [ "nano:2", "touchHead:2.1", "green", [] ],
+    [ "nano:4", "touchSide:2.1", "red", [] ]
+  ]
+}
