@@ -58,6 +58,11 @@ int tiltCurrent = 90, tiltTarget = 90;
 unsigned long lastServoStep = 0;
 const int servoSpeed = 20;
 
+// ---------------- HEART ANIMATION ----------------
+bool showHeart = false;
+unsigned long heartStartTime = 0;
+const unsigned long heartDuration = 2000; // 2 seconds
+
 // =================================================
 // SETUP
 // =================================================
@@ -108,6 +113,7 @@ void loop() {
   checkTouch();
   checkDistance();
   handleMoodTimeout();
+  handleHeartAnimation();
   executeMoodActions(now);
   updateDisplay();
 }
@@ -139,10 +145,25 @@ void updateDisplay() {
       u8g2.drawHLine(76, 35, 20);
     }
     else if (currentMood == HAPPY) {
-      u8g2.drawCircle(42, 40, 12,
-        U8G2_DRAW_UPPER_RIGHT | U8G2_DRAW_UPPER_LEFT);
-      u8g2.drawCircle(86, 40, 12,
-        U8G2_DRAW_UPPER_RIGHT | U8G2_DRAW_UPPER_LEFT);
+
+      if (showHeart) {
+        // Left Heart
+        u8g2.drawDisc(38, 35, 6);
+        u8g2.drawDisc(46, 35, 6);
+        u8g2.drawTriangle(32, 38, 52, 38, 42, 50);
+
+        // Right Heart
+        u8g2.drawDisc(82, 35, 6);
+        u8g2.drawDisc(90, 35, 6);
+        u8g2.drawTriangle(76, 38, 96, 38, 86, 50);
+      }
+      else {
+        // Original happy animation
+        u8g2.drawCircle(42, 40, 12,
+          U8G2_DRAW_UPPER_RIGHT | U8G2_DRAW_UPPER_LEFT);
+        u8g2.drawCircle(86, 40, 12,
+          U8G2_DRAW_UPPER_RIGHT | U8G2_DRAW_UPPER_LEFT);
+      }
     }
     else if (currentMood == ANGRY) {
       u8g2.drawTriangle(30, 30, 52, 45, 30, 50);
@@ -170,6 +191,10 @@ void checkTouch() {
   if (headState == HIGH && lastHeadState == LOW) {
     currentMood = HAPPY;
     moodStartTime = millis();
+
+    showHeart = true;              // start heart animation
+    heartStartTime = millis();
+
 #ifndef SIMULATION_MODE
     myDFPlayer.play(1);
 #endif
@@ -228,6 +253,15 @@ void handleMoodTimeout() {
 }
 
 // =================================================
+// HEART ANIMATION
+// =================================================
+void handleHeartAnimation() {
+  if (showHeart && millis() - heartStartTime > heartDuration) {
+    showHeart = false;   // go back to normal happy eyes
+  }
+}
+
+// =================================================
 // SERVO + ARMS
 // =================================================
 void executeMoodActions(unsigned long now) {
@@ -278,5 +312,6 @@ void executeMoodActions(unsigned long now) {
   if (tiltCurrent > tiltTarget) tiltCurrent--;
 
   panServo.write(panCurrent);
+  
   tiltServo.write(tiltCurrent);
 }
