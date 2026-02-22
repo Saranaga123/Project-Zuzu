@@ -9,6 +9,9 @@
 #include <U8g2lib.h>
 #include <Servo.h>
 #include <SoftwareSerial.h>
+#include <DFRobotDFPlayerMini.h>
+
+DFRobotDFPlayerMini myDFPlayer;
 
 // --- PIN DEFINITIONS ---
 #define PIN_EYES_SDA    A4
@@ -62,6 +65,14 @@ void setup() {
   dfSerial.begin(9600);
   
   Serial.println("Zuzu System Online...");
+  dfSerial.begin(9600);
+  
+  if (!myDFPlayer.begin(dfSerial)) {
+    Serial.println(F("DFPlayer Error: Check SD Card/Wiring"));
+  } else {
+    myDFPlayer.volume(20); // Set volume (0 to 30)
+    myDFPlayer.play(4);   // Play "Hello!" on startup
+  }
 }
 
 // --- TIMING VARIABLES ---
@@ -127,4 +138,96 @@ void updateDisplay() {
     }
     // Add more moods like ANGRY or SLEEP here...
   } while (u8g2.nextPage());
+}
+
+// --- SENSOR LOGIC ---
+
+void checkTouch() {
+  // Check the Head sensor (Pin D2)
+  if (digitalRead(PIN_TOUCH_HEAD) == HIGH) {
+    if (currentMood != HAPPY) {
+       currentMood = HAPPY;
+       myDFPlayer.play(1); // Play Happy Chirp
+    }
+  }
+
+  if (digitalRead(PIN_TOUCH_SIDE) == HIGH) {
+    if (currentMood != ANGRY) {
+       currentMood = ANGRY;
+       myDFPlayer.play(2); // Play Grumpy Sigh
+    }
+  }
+}
+
+void checkDistance() {
+  // We use a non-blocking check every 200ms to save CPU power
+  static unsigned long lastUSCheck = 0;
+  if (millis() - lastUSCheck < 200) return; 
+  lastUSCheck = millis();
+
+  long duration;
+  float distance;
+
+  // Trigger the sonic pulse
+  digitalWrite(PIN_US_TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(PIN_US_TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(PIN_US_TRIG, LOW);
+
+  // Read the bounce back (Echo)
+  duration = pulseIn(PIN_US_ECHO, HIGH, 20000); // 20ms timeout
+  distance = (duration * 0.0343) / 2;
+
+  if (distance > 0 && distance < 20) {
+    currentMood = TRACKING; 
+    Serial.print(F("Object detected at: "));
+    Serial.println(distance);
+  } else if (distance > 50) {
+    currentMood = BORED; // Person walked away
+  }
+}
+// --- SERVO VARIABLES ---
+int panCurrent = 90;
+int panTarget = 90;
+int tiltCurrent = 90;
+int tiltTarget = 90;
+unsigned long lastServoStep = 0;
+const int servoSpeed = 25; // Lower is faster (ms per degree)
+
+void executeMoodActions() {
+  unsigned long currentMillis = millis();
+
+  // Only move the servos every 'servoSpeed' milliseconds
+  if (currentMillis - lastServoStep >= servoSpeed) {
+    lastServoStep = currentMillis;
+
+    // --- TRACKING LOGIC ---
+    if (currentMood == TRACKING) {
+      // If object is close, look slightly down
+      tiltTarget = 110; 
+      // Zuzu can "scan" left/right slightly while tracking
+      static int scanDir = 1;
+      panTarget += scanDir;
+      if (panTarget > 120 || panTarget < 60) scanDir *= -1;
+    } 
+    else if (currentMood == HAPPY) {
+      // Wiggle head when happy
+      panTarget = 90 + (5 * sin(currentMillis / 100)); 
+    }
+    else {
+      // Default: Return to center
+      panTarget = 90;
+      tiltTarget = 90;
+    }
+
+    // --- APPLY SMOOTH MOVEMENT ---
+    if (panCurrent < panTarget) panCurrent++;
+    if (panCurrent > panTarget) panCurrent--;
+    if (tiltCurrent < tiltTarget) tiltCurrent++;
+    if (tiltCurrent > tiltTarget) tiltCurrent--;
+
+    panServo.write(panCurrent);
+    tiltServo.write(tiltCurrent);
+  }
 }

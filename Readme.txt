@@ -1,79 +1,80 @@
 # Zuzu - Personal Desktop Companion 🤖
 
-**Zuzu** is an interactive, emotive desktop robot engineered as a custom gift. It uses a "personality-driven" state machine to bridge the gap between simple electronics and social robotics.
+**Zuzu** is a personality-driven desktop robot engineered as a customized gift. It bridges the gap between simple electronics and social robotics by using an asynchronous state-machine to react to its environment in real-time.
 
 ---
 
 ## 🌟 Project Scope + Core Features
-Zuzu is designed to inhabit a workspace, providing emotional interaction through high-fidelity feedback loops.
-
-* **👁️ Active Tracking:** Pan-Tilt ultrasonic array to follow people moving across the desk.
-* **😊 Emotive Vision:** 0.96" OLED "Face" rendering real-time eye animations (Happy, Sad, Angry, Sleepy).
-* **🖐️ Haptic Intelligence:** Multi-zone capacitive touch sensors (Head Pat = Happy | Side Poke = Angry).
-* **🎵 Sonic Identity:** DFPlayer Mini for high-quality chirps, sighs, and custom voice clips.
-* **❓ Attention Seeking:** Initiates "Seeker" protocols if an object is detected but remains out of reach.
+* **👁️ Active Tracking:** Uses a **RB0036 Pan-Tilt** ultrasonic array to "look" at and follow objects.
+* **😊 Emotive Vision:** 0.96" OLED "Face" rendering real-time expressions (Happy, Bored, Angry, Sleepy).
+* **🖐️ Haptic Intelligence:** Capacitive touch sensors for head-pats and side-pokes.
+* **🎵 Sonic Identity:** DFPlayer Mini providing high-fidelity emotional audio feedback.
+* **🧠 Non-Blocking Logic:** Built on `millis()` timing to allow simultaneous movement, blinking, and sensing.
 
 ---
 
-## 🧠 Technical Architecture (The "Brain")
-Built on a modular hardware stack optimized for the ATmega328P.
-
+## 🧠 Technical Architecture
 | Logic Layer | Component | Technical Role |
 | :--- | :--- | :--- |
-| **Microcontroller** | **Arduino Nano V3.0** | Main processing unit; manages state logic. |
-| **Visuals** | **SSD1306 OLED** | 128x64 I2C display (Powered by **U8g2 Library**). |
-| **Spatial Sensing** | **HC-SR04** | Ultrasonic "Radar" for distance and tracking. |
-| **Audio** | **DFPlayer Mini** | MP3-TF-16P Module with 1kΩ resistor on RX line. |
+| **Microcontroller** | **Arduino Nano V3.0** | Main processing unit; manages state logic and I/O. |
+| **Visual Interface** | **SSD1306 OLED** | 128x64 I2C display using **U8g2 (Page Mode)**. |
+| **Mechanics** | **RB0036 Bracket** | 2-Axis Nylon Pan-Tilt for anatomical "head" movement. |
+| **Audio Processing** | **DFPlayer Mini** | MP3-TF-16P Module for localized audio storage. |
 
 ---
 
-## 🔌 Pin Mapping & Wiring
+## 🔌 Pin Mapping & Connectivity
 | Component | Arduino Pin | Function |
 | :--- | :--- | :--- |
-| **OLED SDA** | A4 | I2C Data |
-| **OLED SCL** | A5 | I2C Clock |
-| **Servo 1 (Pan)** | D3 | PWM Head Rotation |
-| **Servo 2 (Tilt)** | D5 | PWM Head Pitch |
-| **Servo 3 (L-Arm)** | D6 | PWM Left Arm |
-| **Servo 4 (R-Arm)** | D9 | PWM Right Arm |
-| **Ultrasonic Trig**| D7 | Trigger Pulse |
-| **Ultrasonic Echo**| D8 | Echo Return |
-| **Touch (Head)** | D2 | Interrupt Trigger (Happy) |
-| **Touch (Side)** | D4 | Grumpy Trigger |
+| **OLED SDA** | A4 | I2C Data Lane |
+| **OLED SCL** | A5 | I2C Clock Lane |
+| **Servo 1 (Pan)** | D3 | PWM Horizontal Rotation (Bracket Base) |
+| **Servo 2 (Tilt)** | D5 | PWM Vertical Pitch (Bracket Top) |
+| **Servo 3 (L-Arm)** | D6 | PWM Left Arm Actuator |
+| **Servo 4 (R-Arm)** | D9 | PWM Right Arm Actuator |
+| **Ultrasonic Trig** | D7 | Sonar Pulse Trigger |
+| **Ultrasonic Echo** | D8 | Sonar Echo Return |
+| **Touch (Head)** | D2 | Interrupt: Happy Interaction |
+| **Touch (Side)** | D4 | Grumpy Interaction |
+| **DFPlayer RX** | D11 | Serial Transmit (via 1kΩ Resistor) |
+| **DFPlayer TX** | D10 | Serial Receive |
 
 ---
 
 ## ⚡ Power Architecture (Single Cable Mode)
-To prevent "Brown-outs" and ensure stability, Zuzu uses a **Common Ground** split-power design:
-1. **Source:** Single 5V 2A USB wall adapter.
-2. **Logic Rail:** Powers Arduino Nano, OLED, and Sensors.
-3. **Power Rail:** Powers 4x SG90 Servos directly (bypass Arduino regulator).
-4. **Common Ground:** All GND pins connected to a single point.
+To ensure stability during simultaneous 4-servo movement and prevent MCU resets:
+1. **Single 5V 2A Source:** Powered via a standard USB wall adapter.
+2. **External Power Rail:** Servos are powered directly via the **MB102 Module** (bypassing the Nano's onboard regulator).
+3. **Common Ground:** All GND pins (Nano, Servos, Sensors, Player) are tied to a unified ground bus.
 
 ---
 
-## 💰 Bill of Materials (Sri Lanka Market - Feb 2026)
-*Estimated local prices from vendors like Tronic.lk, Senith, and Nilambara.*
+## 💰 Bill of Materials (Tronic.lk - Feb 2026)
+| ✅ | Item Code | Component Description | Qty | Price (LKR) | Total (LKR) |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| 🔲 | **AR0022** | Arduino Nano V3.0 + USB Cable | 1 | 1,050 | 1,050 |
+| 🔲 | **DI0025** | 0.96" OLED I2C Display (Blue) | 1 | 590 | 590 |
+| 🔲 | **RB0002** | SG90 9g Micro Servo | 4 | 350 | 1,400 |
+| 🔲 | **RB0036** | 2-Axis Servo Bracket PT Pan/Tilt | 1 | 270 | 270 |
+| 🔲 | **SN0003** | HC-SR04 Ultrasonic Sensor | 1 | 300 | 300 |
+| 🔲 | **SN0038** | TTP223 Touch Module | 2 | 100 | 200 |
+| 🔲 | **RB0060** | DFPlayer Mini MP3 Player | 1 | 450 | 450 |
+| 🔲 | **PW0014** | MB102 Breadboard Power Module | 1 | 250 | 250 |
+| 🔲 | - | Jumper Wires + 830pt Breadboard | 1 | 900 | 900 |
+| 🔲 | - | Small Speaker + 1kΩ Resistor | 1 | 160 | 160 |
+| | | **ESTIMATED TOTAL** | | | **Rs. 5,570** |
 
-| ✅ | Component Item | Qty | Unit Price (LKR) | Total (LKR) |
-| :--- | :--- | :---: | :---: | :---: |
-| 🔲 | Arduino Nano (CH340 Clone) | 1 | 1,050 | 1,050 |
-| 🔲 | 0.96" OLED I2C Display | 1 | 590 | 590 |
-| 🔲 | SG90 Micro Servo | 4 | 350 | 1,400 |
-| 🔲 | Pan-Tilt Mechanical Bracket | 1 | 350 | 350 |
-| 🔲 | HC-SR04 Ultrasonic Sensor | 1 | 300 | 300 |
-| 🔲 | TTP223 Touch Module | 2 | 100 | 200 |
-| 🔲 | DFPlayer Mini Sound Board | 1 | 450 | 450 |
-| 🔲 | MB102 Power Module (for testing) | 1 | 250 | 250 |
-| 🔲 | Jumper Wires + 830pt Breadboard | 1 | 900 | 900 |
-| 🔲 | Small Speaker + 1kΩ Resistor | 1 | 160 | 160 |
-| | | | | |
-| 🚀 | **ESTIMATED TOTAL** | | | **Rs. 5,650** |
+---
+
+## 🛠️ Assembly & Software Guidelines
+* **Calibration:** Execute the "Center Servo" sketch (90°) before attaching the **RB0036** plastic horns to avoid mechanical binding.
+* **Audio Safety:** A **1kΩ resistor** must be used on the D11 line to the DFPlayer RX to prevent signal noise and protect the module.
+* **Display:** Use the `u8g2.firstPage()` loop to keep SRAM usage under 40% on the Nano.
 
 ---
 
 ## 📂 Repository Structure
-* `/src`: Main Arduino `.ino` files and logic.
-* `/assets`: MP3 sound files and eye bitmaps.
-* `/docs`: Wiring diagrams and assembly photos.
-* `/lib`: External library references (U8g2, Servo, DFRobot).
+* `/src`: Main Arduino `.ino` source code.
+* `/assets`: MP3 sound library (0001.mp3 to 0005.mp3).
+* `/docs`: RB0036 Assembly Guide & Wiring Schematics.
+* `/lib`: Required libraries (U8g2, Servo, DFRobotDFPlayerMini).
